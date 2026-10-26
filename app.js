@@ -101,19 +101,29 @@ Please note your assignments: Problem Set 3 on open market operations is due on 
     actionItems: [],
     currentSummaryData: null,
     isRecording: false,
-    recognition: null
+    recognition: null,
+    deferredInstallPrompt: null
   };
 
   // --- DOM Elements ---
   const el = {
     themeToggle: document.getElementById('theme-toggle'),
     btnSettings: document.getElementById('btn-settings'),
+    btnInstallGuide: document.getElementById('btn-install-guide'),
     aiStatusIndicator: document.getElementById('ai-status-indicator'),
     settingsModal: document.getElementById('settings-modal'),
     btnCloseModal: document.getElementById('btn-close-modal'),
     btnSaveSettings: document.getElementById('btn-save-settings'),
     geminiKeySection: document.getElementById('gemini-key-section'),
     geminiApiKeyInput: document.getElementById('gemini-api-key'),
+
+    // Install guide modal elements
+    installGuideModal: document.getElementById('install-guide-modal'),
+    btnCloseInstallModal: document.getElementById('btn-close-install-modal'),
+    btnDoneInstallModal: document.getElementById('btn-done-install-modal'),
+    btnPwaInstall: document.getElementById('btn-pwa-install'),
+    installTabBtns: document.querySelectorAll('.install-tab-btn'),
+    installPanes: document.querySelectorAll('.install-pane'),
 
     // Input elements
     transcriptInput: document.getElementById('transcript-input'),
@@ -954,6 +964,63 @@ Please note your assignments: Problem Set 3 on open market operations is due on 
     el.settingsModal.addEventListener('click', (e) => {
       if (e.target === el.settingsModal) closeSettings();
     });
+
+    // Install guide modal controls
+    if (el.btnInstallGuide) {
+      el.btnInstallGuide.addEventListener('click', () => {
+        el.installGuideModal.classList.remove('hidden');
+      });
+    }
+    if (el.btnCloseInstallModal) {
+      el.btnCloseInstallModal.addEventListener('click', () => {
+        el.installGuideModal.classList.add('hidden');
+      });
+    }
+    if (el.btnDoneInstallModal) {
+      el.btnDoneInstallModal.addEventListener('click', () => {
+        el.installGuideModal.classList.add('hidden');
+      });
+    }
+    if (el.installGuideModal) {
+      el.installGuideModal.addEventListener('click', (e) => {
+        if (e.target === el.installGuideModal) el.installGuideModal.classList.add('hidden');
+      });
+    }
+
+    // Install guide platform tabs
+    el.installTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const platform = btn.dataset.platform;
+        el.installTabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        el.installPanes.forEach(pane => {
+          pane.classList.toggle('active', pane.id === `pane-platform-${platform}`);
+        });
+      });
+    });
+
+    // PWA beforeinstallprompt capture & trigger
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      appState.deferredInstallPrompt = e;
+      if (el.btnPwaInstall) {
+        el.btnPwaInstall.classList.remove('hidden');
+      }
+    });
+
+    if (el.btnPwaInstall) {
+      el.btnPwaInstall.addEventListener('click', async () => {
+        if (!appState.deferredInstallPrompt) return;
+        appState.deferredInstallPrompt.prompt();
+        const { outcome } = await appState.deferredInstallPrompt.userChoice;
+        if (outcome === 'accepted') {
+          showToast('Thank you for installing ClassSummariser!', '🎉');
+        }
+        appState.deferredInstallPrompt = null;
+        el.btnPwaInstall.classList.add('hidden');
+      });
+    }
 
     // Engine radio card toggle
     const engineRadios = el.settingsModal.querySelectorAll('input[name="engine-type"]');

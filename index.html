@@ -8,6 +8,11 @@
   <meta name="keywords" content="class summariser, lecture notes, transcription summarizer, study guide generator, student flashcards, lecture dictation">
   <meta name="author" content="gorgioalahmar">
 
+  <!-- PWA & Mobile metadata -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,12 +45,21 @@
       </div>
 
       <div class="header-actions">
+        <button id="btn-install-guide" class="btn-ghost" title="How to Open or Install ClassSummariser">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="btn-text">Install / Open</span>
+        </button>
+
         <button id="theme-toggle" class="btn-icon" aria-label="Toggle dark/light theme" title="Toggle Theme">
           <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
           </svg>
           <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/>
           </svg>
         </button>
 
@@ -505,6 +519,128 @@
 
       <div class="modal-footer">
         <button id="btn-save-settings" class="btn-primary">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Install & Quickstart Guide Modal -->
+  <div id="install-guide-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <h3 id="install-modal-title" class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          How to Open or Install ClassSummariser
+        </h3>
+        <button id="btn-close-install-modal" class="btn-icon" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Install Platform Tabs -->
+        <div class="install-platform-tabs" role="tablist">
+          <button type="button" class="install-tab-btn active" data-platform="web">🌐 1. Instant Web</button>
+          <button type="button" class="install-tab-btn" data-platform="desktop">💻 2. Desktop App (PWA)</button>
+          <button type="button" class="install-tab-btn" data-platform="mobile">📱 3. Phone (iOS / Android)</button>
+          <button type="button" class="install-tab-btn" data-platform="local">🛠️ 4. Run Offline Locally</button>
+        </div>
+
+        <!-- Tab 1: Web -->
+        <div class="install-pane active" id="pane-platform-web">
+          <div class="install-step-card">
+            <span class="step-badge">Quickest</span>
+            <h4>Zero-Download Browser Access</h4>
+            <p>ClassSummariser is live and hosted on GitHub Pages. You can run it instantly on any device with no installation required.</p>
+            <ol class="step-list">
+              <li>Open the link: <a href="https://gorgioalahmar.github.io/class-summariser/" target="_blank" class="accent-link"><strong>https://gorgioalahmar.github.io/class-summariser/</strong></a></li>
+              <li>Bookmark the page (<kbd>⌘ + D</kbd> on Mac or <kbd>Ctrl + D</kbd> on Windows) for one-click access during lectures.</li>
+              <li>Paste your lecture dictation or click <strong>"Live Mic"</strong> to record speech.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Tab 2: Desktop -->
+        <div class="install-pane" id="pane-platform-desktop">
+          <div class="install-step-card">
+            <div class="pwa-header-row">
+              <div>
+                <h4>Install as a Desktop App</h4>
+                <p>Launch ClassSummariser in its own dedicated, distraction-free window directly from your macOS Dock or Windows Start Menu.</p>
+              </div>
+              <button id="btn-pwa-install" class="btn-primary btn-pwa-trigger hidden">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Install App Now</span>
+              </button>
+            </div>
+
+            <ol class="step-list">
+              <li><strong>Step 1:</strong> Open the app in <strong>Google Chrome</strong> or <strong>Microsoft Edge</strong>.</li>
+              <li><strong>Step 2:</strong> Look on the right side of the address/URL bar and click the <strong>Install</strong> icon ⊕.
+                <div class="sub-step-tip">Or click Chrome's menu (three dots <code>⋮</code>) &gt; <em>"Save and share"</em> &gt; <em>"Install ClassSummariser PRO"</em>.</div>
+              </li>
+              <li><strong>Step 3:</strong> Click <strong>Install</strong> in the confirmation box.</li>
+              <li><strong>Step 4:</strong> You can now launch ClassSummariser from your Mac Launchpad, Applications folder, or Windows Start Menu!</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Tab 3: Mobile -->
+        <div class="install-pane" id="pane-platform-mobile">
+          <div class="install-step-card">
+            <h4>Install on iPhone, iPad or Android</h4>
+            <div class="mobile-grid">
+              <div class="mobile-col">
+                <h5>🍎 iPhone / iPad (Safari)</h5>
+                <ol class="step-list">
+                  <li>Open the site in <strong>Safari</strong>.</li>
+                  <li>Tap the <strong>Share</strong> button (box with arrow ⎋ at bottom).</li>
+                  <li>Scroll down and tap <strong>"Add to Home Screen"</strong>.</li>
+                  <li>Tap <strong>Add</strong>. It now acts like a native iOS app!</li>
+                </ol>
+              </div>
+              <div class="mobile-col">
+                <h5>🤖 Android (Chrome)</h5>
+                <ol class="step-list">
+                  <li>Open the site in <strong>Chrome</strong>.</li>
+                  <li>Tap the <strong>menu icon</strong> (three dots <code>⋮</code>).</li>
+                  <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+                  <li>Tap <strong>Install</strong> to add it to your apps.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Local Offline -->
+        <div class="install-pane" id="pane-platform-local">
+          <div class="install-step-card">
+            <h4>Run Locally on Your Machine (100% Offline)</h4>
+            <p>ClassSummariser has zero external build dependencies. You can run it offline on your laptop:</p>
+            
+            <div class="code-method-box">
+              <strong>Option A: Direct Double-Click (No Git Required)</strong>
+              <ol class="step-list">
+                <li>Go to <a href="https://github.com/gorgioalahmar/class-summariser" target="_blank" class="accent-link">github.com/gorgioalahmar/class-summariser</a></li>
+                <li>Click the green <strong>"&lt;&gt; Code"</strong> button and click <strong>"Download ZIP"</strong>.</li>
+                <li>Unzip the downloaded folder and double-click <strong><code>index.html</code></strong>. It will open in your browser immediately!</li>
+              </ol>
+            </div>
+
+            <div class="code-method-box">
+              <strong>Option B: Terminal (Git)</strong>
+              <pre class="terminal-snippet"><code>git clone https://github.com/gorgioalahmar/class-summariser.git
+cd class-summariser
+open index.html   # On macOS (or: start index.html on Windows)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="https://github.com/gorgioalahmar/class-summariser" target="_blank" rel="noopener noreferrer" class="btn-ghost">View on GitHub</a>
+        <button id="btn-done-install-modal" class="btn-primary" style="width: auto; padding: 0 24px;">Got It</button>
       </div>
     </div>
   </div>
