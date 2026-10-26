@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClassSummariser — AI Lecture & Dictation Summarizer</title>
+  <meta name="description" content="Paste raw class dictation, audio transcripts, or speak live to generate structured summaries, study guides, action items, and flashcards instantly.">
+  <meta name="keywords" content="class summariser, lecture notes, transcription summarizer, study guide generator, student flashcards, lecture dictation">
+  <meta name="author" content="gorgioalahmar">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
+  <div class="ambient-glow glow-3" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M8 7h6"/>
+            <path d="M8 11h8"/>
+            <path d="m16 16 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>ClassSummariser <span class="badge-pro">PRO</span></h1>
+          <p class="tagline">Turn spoken lectures & raw dictations into crystal-clear study notes</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn-icon" aria-label="Toggle dark/light theme" title="Toggle Theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+
+        <button id="btn-settings" class="btn-ghost" title="AI Provider Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <span class="btn-text">Settings</span>
+          <span id="ai-status-indicator" class="status-dot offline" title="Offline Engine Active"></span>
+        </button>
+
+        <a href="https://github.com/gorgioalahmar/class-summariser" target="_blank" rel="noopener noreferrer" class="btn-github" id="link-github-repo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="container main-content">
+    <!-- Top Highlights Banner -->
+    <section class="hero-card">
+      <div class="hero-badge">
+        <span class="pulse-indicator"></span>
+        Instant Neural & Heuristic Extraction • Zero Cloud Lock-In
+      </div>
+      <h2 class="hero-title">Paste Class Dictation. Get Actionable Knowledge.</h2>
+      <p class="hero-subtitle">
+        Whether you recorded lecture audio with your phone, transcribed a Zoom class, or dictating in real time —
+        ClassSummariser isolates core concepts, assignments, dates, and study flashcards in seconds.
+      </p>
+
+      <!-- Preset Pills -->
+      <div class="preset-row">
+        <span class="preset-label">Try sample lectures:</span>
+        <button class="pill-btn" id="sample-cs" data-sample="cs">
+          💻 CS 301: Raft Consensus
+        </button>
+        <button class="pill-btn" id="sample-bio" data-sample="bio">
+          🧬 BIO 204: ATP & Respiration
+        </button>
+        <button class="pill-btn" id="sample-econ" data-sample="econ">
+          📈 ECON 102: Central Banks & Inflation
+        </button>
+      </div>
+    </section>
+
+    <!-- Workspace Grid -->
+    <div class="workspace-grid">
+      <!-- Left Panel: Input & Controls -->
+      <section class="card input-card" id="panel-input">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h3 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+              Class Dictation / Transcript
+            </h3>
+            <span class="card-badge" id="source-badge">Raw Input</span>
+          </div>
+
+          <div class="input-tools">
+            <button id="btn-paste-clip" class="tool-btn" title="Paste from clipboard">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+              </svg>
+              <span>Paste</span>
+            </button>
+
+            <button id="btn-upload-file" class="tool-btn" title="Upload transcript (.txt, .srt, .vtt)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>Upload</span>
+            </button>
+            <input type="file" id="file-input" accept=".txt,.srt,.vtt,.md" style="display: none;">
+
+            <button id="btn-live-mic" class="tool-btn mic-btn" title="Live Voice Dictation (Microphone)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+              </svg>
+              <span id="mic-btn-text">Live Mic</span>
+            </button>
+
+            <button id="btn-clear-text" class="tool-btn text-muted" title="Clear text">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recording Indicator -->
+        <div id="recording-indicator" class="recording-bar hidden">
+          <div class="pulse-ring"></div>
+          <span class="recording-text">Listening to live lecture... speak clearly</span>
+          <div class="audio-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="textarea-container">
+          <textarea
+            id="transcript-input"
+            id="transcript-textarea"
+            placeholder="Paste your raw lecture dictation, audio transcription, or professor's notes here... Or click 'Live Mic' to dictate in real-time, or choose a sample above!"
+            rows="12"
+            spellcheck="true"
+          ></textarea>
+        </div>
+
+        <div class="input-footer">
+          <div class="text-meta">
+            <span id="word-count">0 words</span> • 
+            <span id="char-count">0 characters</span> • 
+            <span id="spoken-time">~0m lecture time</span>
+          </div>
+        </div>
+
+        <!-- Configuration Controls -->
+        <div class="summariser-controls">
+          <div class="control-row">
+            <label class="control-label" for="summary-length">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/>
+              </svg>
+              Summary Depth:
+            </label>
+            <div class="depth-buttons" id="depth-selector" role="radiogroup">
+              <button type="button" class="depth-btn" data-depth="quick" role="radio" aria-checked="false">Quick (Executive)</button>
+              <button type="button" class="depth-btn active" data-depth="standard" role="radio" aria-checked="true">Standard (Study Guide)</button>
+              <button type="button" class="depth-btn" data-depth="comprehensive" role="radio" aria-checked="false">Comprehensive</button>
+            </div>
+          </div>
+
+          <div class="control-row options-row">
+            <span class="control-label">Extract Modules:</span>
+            <div class="checkbox-group">
+              <label class="custom-checkbox">
+                <input type="checkbox" id="opt-key-concepts" checked>
+                <span>Key Concepts</span>
+              </label>
+              <label class="custom-checkbox">
+                <input type="checkbox" id="opt-action-items" checked>
+                <span>Deadlines & HW</span>
+              </label>
+              <label class="custom-checkbox">
+                <input type="checkbox" id="opt-flashcards" checked>
+                <span>Flashcards</span>
+              </label>
+              <label class="custom-checkbox">
+                <input type="checkbox" id="opt-glossary" checked>
+                <span>Definitions</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="btn-summarise" class="btn-primary btn-large">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              <span>Summarise Class Dictation</span>
+              <kbd class="shortcut-kbd">⌘ + Enter</kbd>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Summary Dashboard -->
+      <section class="card output-card" id="panel-output">
+        <!-- Telemetry Stats Bar -->
+        <div class="stats-bar" id="stats-bar">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-words-condensed">0%</div>
+            <div class="stat-label">Reduction Ratio</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-read-time">0 min</div>
+            <div class="stat-label">Read Time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-concepts-count">0</div>
+            <div class="stat-label">Core Concepts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-tasks-count">0</div>
+            <div class="stat-label">Action Items</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Tabs -->
+        <div class="dashboard-tabs" role="tablist">
+          <button class="tab-btn active" id="tab-btn-overview" data-target="tab-overview" role="tab" aria-selected="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h11"/></svg>
+            <span>Overview & Key Points</span>
+          </button>
+          <button class="tab-btn" id="tab-btn-concepts" data-target="tab-concepts" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+            <span>Concepts & Terms</span>
+          </button>
+          <button class="tab-btn" id="tab-btn-actions" data-target="tab-actions" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+            <span>Deadlines & HW</span>
+            <span class="badge-count" id="badge-actions-count">0</span>
+          </button>
+          <button class="tab-btn" id="tab-btn-flashcards" data-target="tab-flashcards" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <span>Study Flashcards</span>
+          </button>
+          <button class="tab-btn" id="tab-btn-chronology" data-target="tab-chronology" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Lecture Flow</span>
+          </button>
+        </div>
+
+        <!-- Output Action Bar (Copy, Export, Print) -->
+        <div class="output-actions">
+          <div class="output-actions-left">
+            <button id="btn-copy-summary" class="action-chip" title="Copy structured summary to clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy All</span>
+            </button>
+            <button id="btn-export-md" class="action-chip" title="Download as formatted Markdown file">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download .md</span>
+            </button>
+            <button id="btn-print" class="action-chip" title="Print notes or Save to PDF">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+              <span>Print / PDF</span>
+            </button>
+          </div>
+
+          <div class="output-actions-right">
+            <div class="search-notes-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="filter-summary-input" placeholder="Search in notes...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Output Views Area -->
+        <div class="output-content-area" id="output-content-area">
+          <!-- Empty State -->
+          <div id="empty-state" class="empty-state">
+            <div class="empty-icon-pulse">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <h4>Ready to Summarise Your Lecture</h4>
+            <p>Paste a dictation, record your professor live, or click one of the sample lectures above to see how ClassSummariser formats lecture notes.</p>
+            <div class="empty-tips">
+              <div class="tip-pill">💡 Tip: Try clicking "CS 301" above for an instant demo</div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div id="loading-state" class="loading-state hidden">
+            <div class="spinner-orbit">
+              <div class="orbit-center"></div>
+              <div class="orbit-satellite"></div>
+            </div>
+            <h4>Distilling Lecture Dictation...</h4>
+            <p class="loading-status-text" id="loading-status-text">Parsing acoustic & linguistic structure</p>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <!-- Active Tabs Content (Hidden when empty/loading) -->
+          <div id="dashboard-results" class="dashboard-results hidden">
+            <!-- TAB 1: Overview & Executive Summary -->
+            <div class="tab-pane active" id="tab-overview" role="tabpanel">
+              <div class="overview-header-card">
+                <div class="lecture-topic-badge" id="lecture-topic-badge">General Lecture</div>
+                <h3 class="lecture-title-display" id="lecture-title-display">Lecture Synthesis</h3>
+                <p class="lecture-thesis-display" id="lecture-thesis-display"></p>
+              </div>
+
+              <!-- High-level takeaways -->
+              <div class="summary-section">
+                <h4 class="section-heading">
+                  <span class="heading-icon icon-sparkle">✨</span>
+                  Executive Summary & Core Takeaways
+                </h4>
+                <div class="takeaways-grid" id="takeaways-container"></div>
+              </div>
+
+              <!-- Detailed Synthesized Notes -->
+              <div class="summary-section">
+                <h4 class="section-heading">
+                  <span class="heading-icon icon-notes">📝</span>
+                  Distilled Lecture Notes
+                </h4>
+                <div class="prose-notes" id="prose-notes-container"></div>
+              </div>
+            </div>
+
+            <!-- TAB 2: Concepts & Definitions -->
+            <div class="tab-pane" id="tab-concepts" role="tabpanel">
+              <div class="summary-section">
+                <h4 class="section-heading">
+                  <span class="heading-icon icon-bulb">💡</span>
+                  Key Terminology & Definitions
+                </h4>
+                <div class="definitions-grid" id="definitions-container"></div>
+              </div>
+            </div>
+
+            <!-- TAB 3: Deadlines & Action Items -->
+            <div class="tab-pane" id="tab-actions" role="tabpanel">
+              <div class="summary-section">
+                <div class="section-header-flex">
+                  <h4 class="section-heading">
+                    <span class="heading-icon icon-calendar">📅</span>
+                    Homework, Readings & Important Dates
+                  </h4>
+                  <span class="tasks-progress-badge" id="tasks-progress-badge">0 / 0 Completed</span>
+                </div>
+                <div class="action-items-list" id="action-items-container"></div>
+              </div>
+            </div>
+
+            <!-- TAB 4: Interactive Study Flashcards -->
+            <div class="tab-pane" id="tab-flashcards" role="tabpanel">
+              <div class="flashcards-toolbar">
+                <div class="flashcard-counter" id="flashcard-counter">Card 1 of 5</div>
+                <div class="flashcard-nav-btns">
+                  <button id="btn-fc-prev" class="btn-icon-small" title="Previous Card">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <button id="btn-fc-flip" class="btn-ghost-small">Flip Card ⎵</button>
+                  <button id="btn-fc-next" class="btn-icon-small" title="Next Card">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flashcard-wrapper">
+                <div class="flashcard-flipper" id="flashcard-element" tabindex="0" role="button" aria-label="Interactive Flashcard. Click or press Space to flip.">
+                  <div class="flashcard-face flashcard-front">
+                    <div class="fc-badge">QUESTION</div>
+                    <div class="fc-text" id="fc-question-text">Question will appear here...</div>
+                    <div class="fc-hint">Click card or press Space to reveal answer 🔄</div>
+                  </div>
+                  <div class="flashcard-face flashcard-back">
+                    <div class="fc-badge fc-badge-answer">ANSWER & CONTEXT</div>
+                    <div class="fc-text" id="fc-answer-text">Answer will appear here...</div>
+                    <div class="fc-hint">Click card to flip back</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flashcards-grid-overview" id="flashcards-grid-overview">
+                <!-- Mini thumbnails of all cards -->
+              </div>
+            </div>
+
+            <!-- TAB 5: Chronological Lecture Flow -->
+            <div class="tab-pane" id="tab-chronology" role="tabpanel">
+              <div class="summary-section">
+                <h4 class="section-heading">
+                  <span class="heading-icon icon-timeline">⏱️</span>
+                  Chronological Progression
+                </h4>
+                <div class="timeline-container" id="timeline-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ask My Lecture (Interactive Q&A Bar) -->
+        <div class="lecture-qa-bar" id="lecture-qa-bar">
+          <div class="qa-input-wrapper">
+            <span class="qa-icon">🤔</span>
+            <input type="text" id="qa-question-input" placeholder="Have a question about what the professor said? Ask your lecture..." disabled>
+            <button id="btn-qa-ask" class="qa-submit-btn" disabled>Ask</button>
+          </div>
+          <div id="qa-answer-box" class="qa-answer-box hidden">
+            <div class="qa-answer-header">
+              <span class="qa-answer-title">Answer from Lecture Transcript</span>
+              <button id="btn-close-qa" class="btn-icon-tiny" title="Close answer">✕</button>
+            </div>
+            <p id="qa-answer-text" class="qa-answer-content"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Settings Modal (AI API Keys & Preferences) -->
+  <div id="settings-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Summarizer Engine Configuration
+        </h3>
+        <button id="btn-close-modal" class="btn-icon" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="settings-engine-selection">
+          <label class="radio-card active">
+            <input type="radio" name="engine-type" value="offline" checked>
+            <div class="radio-card-body">
+              <div class="engine-title">
+                <strong>High-Precision Offline Engine</strong>
+                <span class="badge-tag">Zero Configuration</span>
+              </div>
+              <p>Instant, 100% private in-browser NLP tokenization, key-concept graph scoring, and deadline pattern extraction. Requires no keys or internet.</p>
+            </div>
+          </label>
+
+          <label class="radio-card">
+            <input type="radio" name="engine-type" value="gemini">
+            <div class="radio-card-body">
+              <div class="engine-title">
+                <strong>Google Gemini 1.5 / 2.0 Flash</strong>
+                <span class="badge-tag accent">Advanced AI</span>
+              </div>
+              <p>Enhance summaries with deep contextual prose rewriting, complex conceptual breakdown, and academic question generation using your Gemini API key.</p>
+            </div>
+          </label>
+        </div>
+
+        <div id="gemini-key-section" class="settings-field hidden">
+          <label for="gemini-api-key" class="field-label">Google Gemini API Key:</label>
+          <input type="password" id="gemini-api-key" placeholder="AIzaSy..." class="field-input">
+          <span class="field-help">Keys remain strictly in your browser's private local storage and are never uploaded to any third party.</span>
+        </div>
+
+        <div class="settings-field">
+          <label for="student-level" class="field-label">Default Study Format:</label>
+          <select id="student-level" class="field-select">
+            <option value="undergraduate" selected>Undergraduate / College</option>
+            <option value="highschool">High School / AP Prep</option>
+            <option value="graduate">Graduate / Research Seminar</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-save-settings" class="btn-primary">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
